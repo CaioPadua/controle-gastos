@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contas Mensais</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            padding: 20px;
+        }
+        .mes-column {
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+            overflow: hidden;
+            word-wrap: break-word;
+        }
+        .mes-column h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+        form {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select {
+            padding: 3px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+        ul li .descricao {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        ul li .descricao div {
+            margin: 2px 0;
+        }
+        ul li .actions {
+            display: flex;
+            gap: 10px;
+        }
+        tr th a {
+            text-decoration: none;
+            color: red;
+        }
+        table {
+        width: 100%;
+        border-collapse: collapse;
+        }
+
+        table, th, td{
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        thead  {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contas Mensais</h1>
+    <form action="/adicionar" method="post">
+        <label for="mes">Escolha o Mês:</label>
+            <select id="mes-selecionado" name="mes">
+                <option value="Janeiro">Janeiro</option>
+                <option value="Fevereiro">Fevereiro</option>
+                <option value="Março">Março</option>
+                <option value="Abril">Abril</option>
+                <option value="Maio">Maio</option>
+                <option value="Junho">Junho</option>
+                <option value="Julho">Julho</option>
+                <option value="Agosto">Agosto</option>
+                <option value="Setembro">Setembro</option>
+                <option value="Outubro">Outubro</option>
+                <option value="Novembro">Novembro</option>
+                <option value="Dezembro">Dezembro</option>
+            </select>
+
+        <label for="descricao">Descrição:</label>
+        <input type="text" id="descricao" name="descricao" required>
+    
+        <label for="valor">Valor:</label>
+        <input type="number" id="valor" name="valor" step="0.01" required>
+    
+        <label for="data_vencimento">Data de Vencimento:</label>
+        <input type="date" id="data_vencimento" name="data_vencimento" required>
+    
+        <label for="parcelas">Parcelas:</label>
+        <input type="number" id="parcelas" name="parcelas" required>
+    
+        <button type="submit">Adicionar Conta</button>
+    </form>
+
+    <div class="container" id="conta-container">
+        <div class="mes-column">
+            <h2>{{ mes_selecionado }}</h2>
+            <ul>
+                <table id="tabela-contas">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Descrição</th>
+                            <th>Valor</th>
+                            <th style="width: 28%;">Data de Vencimento</th>
+                            <th>Parcelas</th>
+                        </tr>
+                    </thead>
+                </table>
+
+                {% for conta in contas %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 20%; font-weight: normal;">{{ conta[2] }}</th>
+                            <th style="width: 21%; font-weight: normal;">R$ {{ conta[3] }}</th>
+                            <th style="width: 28%; font-weight: normal;">{{ conta[4] }}</th>
+                            <th style="width: 24%; font-weight: normal;">{{ conta[5] }}</th>                            
+                            <th class="actions">                            
+                                <a href="/editar/{{ conta[0] }}" style="padding: 2px;" >Editar</a>
+                                <a href="/excluir/{{ conta[0] }}">Excluir</a>
+                            </th>
+                        </tr>    
+                    </thead>
+                </table>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectMes = document.getElementById('mes-selecionado');
+            const tituloMes = document.getElementById('titulo-mes');
+            const corpoTabela = document.getElementById('corpo-tabela');
+
+            const atualizarContainer = (mes) => {
+                fetch(`http://localhost:3000/contas?mes=${mes}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro na resposta da rede');
+                        }
+                        return response.json();
+                    })
+                    .then(contas => {
+                        tituloMes.textContent = mes;
+                        corpoTabela.innerHTML = ''; // Limpa o corpo da tabela
+                        if (contas.length > 0) {
+                            contas.forEach(conta => {
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `
+                                    <td style="width: 20%; font-weight: normal;">${conta.descricao}</td>
+                                    <td style="width: 21%; font-weight: normal;">R$ ${conta.valor.toFixed(2)}</td>
+                                    <td style="width: 28%; font-weight: normal;">${conta.data_vencimento}</td>
+                                    <td style="width: 24%; font-weight: normal;">${conta.parcelas}</td>
+                                    <td class="actions">
+                                        <a href="/editar/${conta.id}" style="padding: 2px;">Editar</a>
+                                        <a href="/excluir/${conta.id}">Excluir</a>
+                                    </td>
+                                `;
+                                corpoTabela.appendChild(tr);
+                            });
+                        } else {
+                            corpoTabela.innerHTML = '<tr><td colspan="5">Nenhuma conta encontrada para o mês selecionado.</td></tr>';
+                        }
+                    })
+                    .catch(error => {
+                        corpoTabela.innerHTML = '<tr><td colspan="5">Erro ao carregar as contas. Por favor, tente novamente mais tarde.</td></tr>';
+                        console.error('Erro ao buscar as contas:', error);
+                    });
+            };
+
+            selectMes.addEventListener('change', () => {
+                const mesSelecionado = selectMes.value;
+                atualizarContainer(mesSelecionado);
+            });
+
+            // Inicializa o container com o mês atual selecionado
+            atualizarContainer(selectMes.value);
+        });
+    </script>
+</body>
+</html>

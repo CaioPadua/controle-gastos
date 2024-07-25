@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Conta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .actions {
+            margin-top: 20px;
+        }
+        .actions a {
+            text-decoration: none;
+            color: #dc3545;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        .actions a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Conta</h1>
+        <form action="/editar/{{ conta[0] }}" method="post">
+            <label for="mes">Escolha o Mês:</label>
+            <select id="mes" name="mes">
+                <option value="Janeiro" {% if conta[1] == 'Janeiro' %}selected{% endif %}>Janeiro</option>
+                <option value="Fevereiro" {% if conta[1] == 'Fevereiro' %}selected{% endif %}>Fevereiro</option>
+                <option value="Março" {% if conta[1] == 'Março' %}selected{% endif %}>Março</option>
+                <option value="Abril" {% if conta[1] == 'Abril' %}selected{% endif %}>Abril</option>
+                <option value="Maio" {% if conta[1] == 'Maio' %}selected{% endif %}>Maio</option>
+                <option value="Junho" {% if conta[1] == 'Junho' %}selected{% endif %}>Junho</option>
+                <option value="Julho" {% if conta[1] == 'Julho' %}selected{% endif %}>Julho</option>
+                <option value="Agosto" {% if conta[1] == 'Agosto' %}selected{% endif %}>Agosto</option>
+                <option value="Setembro" {% if conta[1] == 'Setembro' %}selected{% endif %}>Setembro</option>
+                <option value="Outubro" {% if conta[1] == 'Outubro' %}selected{% endif %}>Outubro</option>
+                <option value="Novembro" {% if conta[1] == 'Novembro' %}selected{% endif %}>Novembro</option>
+                <option value="Dezembro" {% if conta[1] == 'Dezembro' %}selected{% endif %}>Dezembro</option>
+            </select>
+        
+            <label for="descricao">Descrição:</label>
+            <input type="text" id="descricao" name="descricao" value="{{ conta[2] }}" required>
+        
+            <label for="valor">Valor:</label>
+            <input type="number" id="valor" name="valor" step="0.01" value="{{ conta[3] }}" required>
+        
+            <label for="data_vencimento">Data de Vencimento:</label>
+            <input type="date" id="data_vencimento" name="data_vencimento" value="{{ conta[4] }}" required>
+        
+            <label for="parcelas">Parcelas:</label>
+            <input type="number" id="parcelas" name="parcelas" value="{{ conta[5] }}" required>
+        
+            <button type="submit">Salvar Alterações</button>
+        </form>
+
+        <div class="actions">
+            <a href="/">Voltar</a>
+        </div>
+    </div>
+</body>
+</html>
